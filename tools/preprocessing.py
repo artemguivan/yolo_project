@@ -9,7 +9,7 @@ def timer(func):
     def wrapper(*args, **kwargs):
         t1 = time()
         result = func(*args, *kwargs)
-        t2 = time()
+        t2 = time() 
         print(f"{func.__name__} executed in {(t2-t1):.4f}")
         return result
     return wrapper

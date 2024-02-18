@@ -9,7 +9,7 @@ colorama==0.4.6
 coloredlogs==15.0.1
 contourpy==1.2.0
 cycler==0.12.1
-decorator==4.4.2
+decorator==4.4.2 
 defusedxml==0.7.1
 filelock==3.13.1
 flatbuffers==23.5.26
