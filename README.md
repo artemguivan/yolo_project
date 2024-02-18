@@ -4,6 +4,8 @@
 <!--Инструкция-->
 ## Установка (Windows)
 У вас должен быть установлен python(version > 3.6)
+```https://www.python.org/downloads/```
+```https://yandex.ru/video/preview/15939223829851143375``` 
 
 1. Клонирование репозитория 
 
