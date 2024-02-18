@@ -99,8 +99,8 @@ def process_video(path):
                     image_np = cv2.cvtColor(np.array(PIL.Image.fromarray(predict.orig_img)), cv2.COLOR_RGB2BGR)
 
                     # считаем центр зрачка
-                    center_x = ((x2+x1) / 2)
-                    center_y = ((y2+y1) / 2)
+                    center_x = ((coordinates[0][2]+coordinates[0][0]) / 2)
+                    center_y = ((coordinates[0][3]+coordinates[0][1]) / 2)
 
                     center_x_list.append(center_x)
                     center_y_list.append(center_y)
