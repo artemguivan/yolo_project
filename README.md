@@ -21,7 +21,7 @@
 
 4. Установка зависимостей
 
-```pip3 install -r requirements.txt```
+```pip install -r requirements.txt```
 
 5. Запуск скрипта для демонстрации возможностей Oxygen
 
