@@ -11,14 +11,11 @@ import PIL
 import time
 import csv
 
-
 GREEN = (0, 255, 0)
 model = YOLO("yolov8.onnx")
-
 path_to_processed_video = r"out_5sec.mp4" # сюда вставляем путь, в котором будет находиться обработанное видео
-
 path = r"saved_video\test5sec.mp4" # сюда вставляем путь к видео, которое хотим обработать 
-
+csv_path = r"glint_frames.csv" # 
 center_x_list = []
 center_y_list = []
 frames = []
@@ -44,9 +41,7 @@ def create_video_writer(path, output_filename) -> None:
     return writer
 
 writer = create_video_writer(path, path_to_processed_video)
- 
 start_time = time.time()
-
 video_cap = cv2.VideoCapture(path)
 
 def main():
@@ -79,15 +74,12 @@ def main():
                 image_np = cv2.cvtColor(np.array(PIL.Image.fromarray(predict.orig_img)), cv2.COLOR_RGB2BGR)
 
             # считаем центр зрачка
-                center_x = ((x2+x1) / 2)
-                center_y = ((y2+y1) / 2)
-
-                
+                center_x = ((coordinates[0][2]+coordinates[0][0]) / 2)
+                center_y = ((coordinates[0][3]+coordinates[0][1]) / 2)
                 center_x_list.append(center_x)
                 center_y_list.append(center_y)
                 frames.append(frame_number)
-
-
+                
             # отрисовываем прямоугольник
                 cv2.rectangle(image_np, (x1, y1), (x2, y2), GREEN, 2)
 
@@ -97,7 +89,7 @@ def main():
                 cv2.imshow("КАДР", image_np)
 
                 df = pd.DataFrame({'center_x': center_x_list, 'center_y': center_y_list, "frame": frames})
-                df.to_csv(r"glint_frames.csv", index=False)
+                df.to_csv(csv_path, index=False)
 
             key = cv2.waitKey(20)
 
