@@ -8,7 +8,6 @@ import streamlit as st
 from ultralytics import YOLO
 import pandas as pd
 import moviepy.editor as mp
-
 import time
 import tempfile
 
@@ -22,27 +21,27 @@ class TextShower:
             uploaded_text = st.text(f"Видео будет обработано примерно за : {round(self.duration*3, 2)} секунду")
         else:
             uploaded_text = st.text(f"Видео будет обработано примерно за : {round(self.duration*3, 2)} секунд")
-         
-       # time.sleep(int(self.duration*5/4))
-       # uploaded_text.empty()
-       # uploaded_text = st.text(f"Осталось совсем чуть-чуть!")
-       # time.sleep(int(self.duration*5/4))
-       # uploaded_text.empty()
-       # uploaded_text = st.text(f"Осталось примерно {int(self.duration-2*(self.duration*5/4))} секунд!")
-       # time.sleep(int(self.duration*5/4))
-       # uploaded_text.empty()
-       # uploaded_text = st.text(f"Готово! Буквально через {int(self.duration)} секунд сможете скачать файл!")
+        """ 
+        time.sleep(int(self.duration*5/4))
+        uploaded_text.empty()
+        uploaded_text = st.text(f"Осталось совсем чуть-чуть!")
+        time.sleep(int(self.duration*5/4))
+        uploaded_text.empty()
+        uploaded_text = st.text(f"Осталось примерно {int(self.duration-2*(self.duration*5/4))} секунд!")
+        time.sleep(int(self.duration*5/4))
+        uploaded_text.empty()
+        uploaded_text = st.text(f"Готово! Буквально через {int(self.duration)} секунд сможете скачать файл!")
+        """
 
 start_time = time.time()
 GREEN = (0, 255, 0)
-model = YOLO("yolov8.onnx")
-
+model = YOLO("best_new_23.onnx")
 path_to_processed_video = "output_video.mp4"
 
 center_x_list = []
 center_y_list = []
 frames = []
-processing_done = False  # Flag to indicate if processing has been done
+processing_done = False
 
 def create_video_writer(path, output_filename) -> None:
     """
@@ -132,7 +131,7 @@ def process_video(path):
         video_cap.release()
         cv2.destroyAllWindows()
 
-        # Save CSV file
+        # сохраняю csv-файл
         df = pd.DataFrame({'center_x': center_x_list, 'center_y': center_y_list, "frame": frames})
         csv_filename = path_to_processed_video.replace(".mp4", "_frames.csv")
         df.to_csv(csv_filename, index=False)

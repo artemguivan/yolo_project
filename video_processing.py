@@ -12,10 +12,9 @@ import time
 import csv
 
 GREEN = (0, 255, 0)
-model = YOLO("yolov8.onnx")
+model = YOLO("best_new_23.onnx")
 path_to_processed_video = r"out_5sec.mp4" # сюда вставляем путь, в котором будет находиться обработанное видео
 path = r"saved_video\test5sec.mp4" # сюда вставляем путь к видео, которое хотим обработать 
-csv_path = r"glint_frames.csv" # 
 center_x_list = []
 center_y_list = []
 frames = []
@@ -45,7 +44,6 @@ start_time = time.time()
 video_cap = cv2.VideoCapture(path)
 
 def main():
-    # try except
     if not video_cap.isOpened():
         print("Ошибка открыьтия файла")
     else:
@@ -79,20 +77,16 @@ def main():
                 center_x_list.append(center_x)
                 center_y_list.append(center_y)
                 frames.append(frame_number)
-                
+    
             # отрисовываем прямоугольник
                 cv2.rectangle(image_np, (x1, y1), (x2, y2), GREEN, 2)
-
+                
             # отрисовываем центр зрачка
                 cv2.circle(image_np, (int(center_x), int(center_y)), radius=3, color=GREEN, thickness=-1)
                 writer.write(image_np)
                 cv2.imshow("КАДР", image_np)
 
-                df = pd.DataFrame({'center_x': center_x_list, 'center_y': center_y_list, "frame": frames})
-                df.to_csv(csv_path, index=False)
-
             key = cv2.waitKey(20)
-
             if key == ord('q'):
                 print("Стоп")
                 break
@@ -101,15 +95,18 @@ def main():
         else:
             print("Взятие видео закончено")
             break
-
+    
+    df = pd.DataFrame({'center_x': center_x_list, 'center_y': center_y_list, "frame": frames})
+    csv_filename = path_to_processed_video.replace(".mp4", "_frames.csv")
+    df.to_csv(csv_filename, index=False)
     end_time = time.time()
     execution_time = end_time - start_time
     print("Обработка заняла:", execution_time, "секунд")
+
     
+
     video_cap.release()
     cv2.destroyAllWindows()
-
-    # прописать логгинг
 
 if __name__ == "__main__":
     main()
