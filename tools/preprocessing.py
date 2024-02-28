@@ -21,7 +21,7 @@ def cut_video(path: str, start: int, end: int, savepath: str) -> None:
     path: путь к видео, которое Вы хотите обрезать
     start: секунда с которой будет обрезано видео 
     end: секунда до которой будет обрезано видео
-    savepath: место, в которое сохраняем 
+    savepath: место, в которое сохраняем обработанное видео
 
     """
 
@@ -58,12 +58,12 @@ def get_first_frame_info(path) -> None:
     return image.size
 
 
-def cut_video_on_frames(path:str, path_to_save=r"C:\Users\MVM\OneDrive\Рабочий стол\yolo\deployment\yolo_project\glint_frames") -> None:
+def cut_video_on_frames(path:str, path_to_save: str) -> None:
     """
     Функция принимает путь к видео и каждый второй кадр добавляет в директорию, которая была указана в аргументах
 
-    path: str
-    path_to_save: str 
+    path: путь к видео, которое Вы хотите обрезать
+    path_to_save: место, в которое сохраняем обработанное видео
     """
     capture = cv2.VideoCapture(path)
     frame_number = 0
