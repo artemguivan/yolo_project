@@ -35,7 +35,7 @@ def get_fps(path) -> int:
     """
     Функция принимает путь к видео и выдаёт количество кадров в секунду(fps) в целых числах
 
-    path: str
+    path: путь к видео
     
     """
     # png, jpeg if another smth
