@@ -12,12 +12,14 @@ import time
 import csv
 
 GREEN = (0, 255, 0)
-model = YOLO("best_new_23.onnx")
+model = YOLO(r"weights\best_pupil_2_4_24.onnx")
 path_to_processed_video = r"out_5sec.mp4" # сюда вставляем путь, в котором будет находиться обработанное видео
 path = r"saved_video\test5sec.mp4" # сюда вставляем путь к видео, которое хотим обработать 
 center_x_list = []
 center_y_list = []
 frames = []
+# чтобы в отдельном окне отображать обработку видео поменяйте значение в show_flag на True
+show_flag = False
 
 def create_video_writer(path, output_filename) -> None:
     """
@@ -59,12 +61,17 @@ def main():
         ret, frame = video_cap.read()
         if ret:
             frame_number +=1
-            predict = model(frame, task="detect")[0]
+            predict = model(frame, task="detect", device="cpu")[0]
+            
 
             if int(sv.Detections.from_ultralytics(predict).xyxy.size) == int(0):
                 print("Не найдено зрачка на фото")
                 writer.write(frame)
-                cv2.imshow("КАДР", frame)
+                center_x_list.append(0)
+                center_y_list.append(0)
+                frames.append(frame_number)
+                if show_flag == True:
+                    cv2.imshow("КАДР", frame)
             else:
                 coordinates = copy.deepcopy(sv.Detections.from_ultralytics(predict).xyxy)
                 x1, y1, x2, y2 = int(coordinates[0][0]), int(coordinates[0][1]), int(coordinates[0][2]), int(coordinates[0][3])
@@ -72,8 +79,8 @@ def main():
                 image_np = cv2.cvtColor(np.array(PIL.Image.fromarray(predict.orig_img)), cv2.COLOR_RGB2BGR)
 
             # считаем центр зрачка
-                center_x = ((coordinates[0][2]+coordinates[0][0]) / 2)
-                center_y = ((coordinates[0][3]+coordinates[0][1]) / 2)
+                center_x = round(((coordinates[0][2]+coordinates[0][0]) / 2), 6)
+                center_y = round(((coordinates[0][3]+coordinates[0][1]) / 2), 6)
                 center_x_list.append(center_x)
                 center_y_list.append(center_y)
                 frames.append(frame_number)
@@ -84,7 +91,8 @@ def main():
             # отрисовываем центр зрачка
                 cv2.circle(image_np, (int(center_x), int(center_y)), radius=3, color=GREEN, thickness=-1)
                 writer.write(image_np)
-                cv2.imshow("КАДР", image_np)
+                if show_flag == True:
+                    cv2.imshow("КАДР", image_np)
 
             key = cv2.waitKey(20)
             if key == ord('q'):
@@ -97,13 +105,11 @@ def main():
             break
     
     df = pd.DataFrame({'center_x': center_x_list, 'center_y': center_y_list, "frame": frames})
-    csv_filename = path_to_processed_video.replace(".mp4", "_frames.csv")
-    df.to_csv(csv_filename, index=False)
+    excel_filename = path_to_processed_video.replace(".mp4", "_frames.xlsx")
+    df.to_excel(excel_filename, index=False)
     end_time = time.time()
     execution_time = end_time - start_time
     print("Обработка заняла:", execution_time, "секунд")
-
-    
 
     video_cap.release()
     cv2.destroyAllWindows()

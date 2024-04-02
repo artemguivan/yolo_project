@@ -35,7 +35,7 @@ class TextShower:
 
 start_time = time.time()
 GREEN = (0, 255, 0)
-model = YOLO("best_new_23.onnx")
+model = YOLO(r"weights\best_pupil_2_4_24.onnx")
 path_to_processed_video = "output_video.mp4"
 
 center_x_list = []
@@ -91,6 +91,9 @@ def process_video(path):
                 if int(sv.Detections.from_ultralytics(predict).xyxy.size) == int(0):
                     print("Не найдено зрачка на фото")
                     writer.write(frame)
+                    center_x_list.append(0)
+                    center_y_list.append(0)
+                    frames.append(frame_number)
                 else:
                     coordinates = copy.deepcopy(sv.Detections.from_ultralytics(predict).xyxy)
                     x1, y1, x2, y2 = int(coordinates[0][0]), int(coordinates[0][1]), int(coordinates[0][2]), int(coordinates[0][3])
@@ -98,9 +101,8 @@ def process_video(path):
                     image_np = cv2.cvtColor(np.array(PIL.Image.fromarray(predict.orig_img)), cv2.COLOR_RGB2BGR)
 
                     # считаем центр зрачка
-                    center_x = ((coordinates[0][2]+coordinates[0][0]) / 2)
-                    center_y = ((coordinates[0][3]+coordinates[0][1]) / 2)
-
+                    center_x = round(((coordinates[0][2]+coordinates[0][0]) / 2), 6)
+                    center_y = round(((coordinates[0][3]+coordinates[0][1]) / 2), 6)
                     center_x_list.append(center_x)
                     center_y_list.append(center_y)
                     frames.append(frame_number)
@@ -133,8 +135,8 @@ def process_video(path):
 
         # сохраняю csv-файл
         df = pd.DataFrame({'center_x': center_x_list, 'center_y': center_y_list, "frame": frames})
-        csv_filename = path_to_processed_video.replace(".mp4", "_frames.csv")
-        df.to_csv(csv_filename, index=False)
+        excel_filename = path_to_processed_video.replace(".mp4", "_frames.xlsx")
+        df.to_excel(excel_filename, index=False)
 
         processing_done = True
 
